@@ -1,30 +1,28 @@
 package com.tericcabrel.authapi.dtos;
 
+import lombok.Getter;
+
+@Getter
 public class RegisterUserDto {
     private String email;
     private String password;
     private String fullName;
+    private String userName;
 
-    public String getEmail() {
-        return email;
-    }
 
     public RegisterUserDto setEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public String getPassword() {
-        return password;
+    public RegisterUserDto setUserName(String userName) {
+        this.userName = userName;
+        return this;
     }
 
     public RegisterUserDto setPassword(String password) {
         this.password = password;
         return this;
-    }
-
-    public String getFullName() {
-        return fullName;
     }
 
     public RegisterUserDto setFullName(String fullName) {

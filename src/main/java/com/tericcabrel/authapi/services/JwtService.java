@@ -22,13 +22,15 @@ import org.springframework.stereotype.Service;
 public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
+
     private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
+
     @Value("${security.jwt.expiration-time}")
     private long jwtExpiration;
 
     private final Set<String> tokenBlacklist = ConcurrentHashMap.newKeySet();
 
-    public String extractUsername(String token) {
+    public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -37,12 +39,18 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails, String userId, String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
+        return generateToken(claims, userDetails, email);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails, String email) {
+        return buildToken(extraClaims, email, jwtExpiration);
+    }
+
+    public String extractUserId(String token) {
+        return extractClaim(token, claims -> claims.get("userId", String.class));
     }
 
     public long getExpirationTime() {
@@ -51,23 +59,24 @@ public class JwtService {
 
     private String buildToken(
             Map<String, Object> extraClaims,
-            UserDetails userDetails,
+            String email,
             long expiration
     ) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
+                .setSubject(email)  // Set email as the subject (sub)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        logger.info(tokenBlacklist.toString());
-        return (username.equals(userDetails.getUsername())) && !isTokenExpired(token) && !tokenBlacklist.contains(token);
+    public boolean isTokenValid(String token,String userEmail) {
+        final String email = extractUserName(token);
+        logger.info(userEmail);
+        logger.info(email);
+        return (userEmail.equals(email)) && !isTokenExpired(token) && !tokenBlacklist.contains(token);
     }
 
     private boolean isTokenExpired(String token) {

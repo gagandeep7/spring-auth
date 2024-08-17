@@ -1,20 +1,22 @@
 package com.tericcabrel.authapi.dtos;
 
-public class LoginUserDto {
-    private String email;
-    private String password;
+import lombok.Getter;
 
-    public String getEmail() {
-        return email;
-    }
+public class LoginUserDto {
+    @Getter
+    private String email;
+    private String userName;
+    @Getter
+    private String password;
 
     public LoginUserDto setEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public String getPassword() {
-        return password;
+    public LoginUserDto setUserName(String userName) {
+        this.userName = userName;
+        return this;
     }
 
     public LoginUserDto setPassword(String password) {
@@ -27,6 +29,7 @@ public class LoginUserDto {
         return "LoginUserDto{" +
                 "email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", userName='" + userName + '\'' +
                 '}';
     }
 }

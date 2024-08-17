@@ -1,4 +1,5 @@
 package com.tericcabrel.authapi.controllers;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.tericcabrel.authapi.entities.User;
@@ -33,7 +34,7 @@ public class AuthenticationController {
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        String jwtToken = jwtService.generateToken(authenticatedUser);
+        String jwtToken = jwtService.generateToken(authenticatedUser, authenticatedUser.getId(), authenticatedUser.getEmail());
 
         LoginResponse loginResponse = new LoginResponse().setToken(jwtToken).setExpiresIn(jwtService.getExpirationTime());
 

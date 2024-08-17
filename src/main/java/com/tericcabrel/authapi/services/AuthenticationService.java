@@ -19,9 +19,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationService(
-        UserRepository userRepository,
-        AuthenticationManager authenticationManager,
-        PasswordEncoder passwordEncoder
+            UserRepository userRepository,
+            AuthenticationManager authenticationManager,
+            PasswordEncoder passwordEncoder
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
@@ -30,19 +30,20 @@ public class AuthenticationService {
 
     public User signup(RegisterUserDto input) {
         var user = new User()
-            .setFullName(input.getFullName())
-            .setEmail(input.getEmail())
-            .setPassword(passwordEncoder.encode(input.getPassword()));
+                .setFullName(input.getFullName())
+                .setEmail(input.getEmail())
+                .setUserName(input.getUserName())
+                .setPassword(passwordEncoder.encode(input.getPassword()));
 
         return userRepository.save(user);
     }
 
     public User authenticate(LoginUserDto input) {
         authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                input.getEmail(),
-                input.getPassword()
-            )
+                new UsernamePasswordAuthenticationToken(
+                        input.getEmail(),
+                        input.getPassword()
+                )
         );
 
         return userRepository.findByEmail(input.getEmail()).orElseThrow();

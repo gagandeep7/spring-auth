@@ -2,6 +2,7 @@
 package com.tericcabrel.authapi.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,19 +12,22 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+@Getter
 @Table(name = "users")
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(nullable = false)
-    private Integer id;
+    private String id;
 
     @Column(nullable = false)
     private String fullName;
 
     @Column(unique = true, length = 100, nullable = false)
     private String email;
+    @Column(unique = true, length = 10, nullable = false)
+    private String userName;
 
     @Column(nullable = false)
     private String password;
@@ -41,13 +45,9 @@ public class User implements UserDetails {
         return List.of();
     }
 
-    public String getPassword() {
-        return password;
-    }
-
     @Override
     public String getUsername() {
-        return email;
+        return userName;
     }
 
     @Override
@@ -70,30 +70,18 @@ public class User implements UserDetails {
         return true;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public User setId(Integer id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
     public User setFullName(String fullName) {
         this.fullName = fullName;
         return this;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public User setEmail(String email) {
         this.email = email;
+        return this;
+    }
+
+    public User setUserName(String userName) {
+        this.userName = userName;
         return this;
     }
 
@@ -102,17 +90,9 @@ public class User implements UserDetails {
         return this;
     }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
     public User setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
         return this;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
     }
 
     public User setUpdatedAt(Date updatedAt) {
@@ -126,6 +106,7 @@ public class User implements UserDetails {
                 "id=" + id +
                 ", fullName='" + fullName + '\'' +
                 ", email='" + email + '\'' +
+                ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
